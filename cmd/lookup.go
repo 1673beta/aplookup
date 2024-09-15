@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/pretty"
 )
 
 var lookupCmd = &cobra.Command{
@@ -35,13 +34,13 @@ var lookupCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		var prettyJSON bytes.Buffer
-		error := json.Indent(&prettyJSON, body, "", "\t")
-		if error != nil {
-			log.Fatal("JSON parse error: ", error)
-		}
+		colorfulJSON := pretty.Color(pretty.PrettyOptions(body, &pretty.Options{
+			Width:  80,
+			Prefix: "",
+			Indent: "\t",
+		}), pretty.TerminalStyle)
 
-		fmt.Println(prettyJSON.String())
+		color.New(color.FgHiGreen).Println(string(colorfulJSON))
 	},
 }
 
